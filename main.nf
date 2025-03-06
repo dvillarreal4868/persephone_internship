@@ -3,9 +3,9 @@
 /*
  * Import external Nextflow scripts
  */
-include { run_trim_galore } from '/home/ubuntu/dvillarreal/code/nextflow_scripts/trim_seqs_02.nf'
-include { upload_to_s3 } from '/home/ubuntu/dvillarreal/code/nextflow_scripts/upload_files_03.nf'
-include { getReadPairsFromSampleIds } from '/home/ubuntu/dvillarreal/code/nextflow_scripts/grab_sample_ids_03.nf'
+include { run_trim_galore } from '/home/ubuntu/dvillarreal/code/nextflow_scripts/trim_seqs.nf'
+include { upload_to_s3 } from '/home/ubuntu/dvillarreal/code/nextflow_scripts/upload_files.nf'
+include { getReadPairsFromSampleIds } from '/home/ubuntu/dvillarreal/code/nextflow_scripts/grab_sample_ids.nf'
 
 /*
  * Parameters
