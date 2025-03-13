@@ -16,9 +16,22 @@ process upload_to_s3 {
     tuple val(sample_id), path(files)
 
     script:
+    // Extract the base bucket name without s3:// prefix
+    def bucket_parts = params.s3_bucket.toString().replaceAll('^s3://', '').split('/', 2)
+    def base_bucket = bucket_parts[0]
+    
+    // Build the complete path including any specified subdirectory
+    def upload_path
+    if (bucket_parts.length > 1) {
+        upload_path = "${bucket_parts[1]}/${params.s3_prefix}"
+    } else {
+        upload_path = "results/${params.s3_prefix}"  // Default to 'results' subdirectory if not specified
+    }
+    
     """
     for file in ${files}; do
-        aws s3 cp "\$file" s3://${params.s3_bucket}/${params.s3_prefix}
+        aws s3 cp "\$file" s3://${base_bucket}/${upload_path}
+        echo "Uploaded \$file to s3://${base_bucket}/${upload_path}"
     done
     """
 }
@@ -33,9 +46,22 @@ process upload_dir_to_s3 {
     path input_files
 
     script:
+    // Extract the base bucket name without s3:// prefix
+    def bucket_parts = params.s3_bucket.toString().replaceAll('^s3://', '').split('/', 2)
+    def base_bucket = bucket_parts[0]
+    
+    // Build the complete path including any specified subdirectory
+    def upload_path
+    if (bucket_parts.length > 1) {
+        upload_path = "${bucket_parts[1]}/${params.s3_prefix}"
+    } else {
+        upload_path = "results/${params.s3_prefix}"  // Default to 'results' subdirectory if not specified
+    }
+    
     """
     for file in ${input_files}; do
-        aws s3 cp "\$file" s3://${params.s3_bucket}/${params.s3_prefix}
+        aws s3 cp "\$file" s3://${base_bucket}/${upload_path}
+        echo "Uploaded \$file to s3://${base_bucket}/${upload_path}"
     done
     """
 }
@@ -54,4 +80,3 @@ workflow {
     // Run upload_dir_to_s3
     upload_dir_to_s3(input_files)
 }
-
